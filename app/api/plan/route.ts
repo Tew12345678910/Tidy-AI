@@ -12,6 +12,7 @@ export async function POST(request: NextRequest) {
       destFolder,
       useOllama,
       ollamaModel,
+      ollamaBaseUrl,
       detectDuplicates,
     } = body;
 
@@ -20,6 +21,11 @@ export async function POST(request: NextRequest) {
         { error: "Missing sourceFolder or destFolder" },
         { status: 400 }
       );
+    }
+
+    // Set Ollama base URL if provided
+    if (ollamaBaseUrl) {
+      process.env.OLLAMA_BASE_URL = ollamaBaseUrl;
     }
 
     const result = await generatePlan({

@@ -1,0 +1,49 @@
+# Source files (only publish compiled dist/)
+cli/
+server/
+app/
+components/
+lib/
+*.ts
+*.tsx
+!*.d.ts
+
+# Config files
+tsconfig*.json
+next.config.js
+tailwind.config.ts
+postcss.config.js
+.eslintrc.json
+
+# Development
+.next/
+node_modules/
+.env*
+!.env.example
+
+# Build artifacts
+bin/
+
+# Testing
+.tidyai/
+test-downloads/
+*.test.*
+*.spec.*
+
+# Git
+.git/
+.gitignore
+.gitattributes
+
+# Documentation (keep only what's in files array)
+IMPLEMENTATION.md
+ARCHITECTURE.md
+CONVERSION_COMPLETE.md
+TESTING.md
+
+# Misc
+.DS_Store
+*.log
+*.pid
+.vscode/
+.idea/

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -46,6 +46,7 @@ import {
   FileText,
   Download,
 } from "lucide-react";
+import { Settings } from "@/components/Settings";
 
 interface FileOperation {
   src: string;
@@ -82,6 +83,7 @@ export default function HomePage() {
   const [destFolder, setDestFolder] = useState("~/Downloads/Organized");
   const [useOllama, setUseOllama] = useState(false);
   const [ollamaModel, setOllamaModel] = useState("llama3.1");
+  const [ollamaBaseUrl, setOllamaBaseUrl] = useState("http://localhost:11434");
   const [detectDuplicates, setDetectDuplicates] = useState(false);
 
   const [planResult, setPlanResult] = useState<PlanResult | null>(null);
@@ -93,6 +95,77 @@ export default function HomePage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [categoryFilter, setCategoryFilter] = useState<string>("all");
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
+  const [ollamaStatus, setOllamaStatus] = useState<{
+    connected: boolean;
+    error?: string;
+    version?: string;
+  } | null>(null);
+  const [checkingOllama, setCheckingOllama] = useState(false);
+  const [availableModels, setAvailableModels] = useState<string[]>([]);
+  const [loadingModels, setLoadingModels] = useState(false);
+
+  const fetchOllamaModels = async () => {
+    setLoadingModels(true);
+    try {
+      const response = await fetch(
+        `/api/ollama/models?baseUrl=${encodeURIComponent(ollamaBaseUrl)}`
+      );
+      const data = await response.json();
+      if (data.models && data.models.length > 0) {
+        const modelNames = data.models.map((m: any) => m.name);
+        setAvailableModels(modelNames);
+        // If current model is not in the list and there are models, select the first one
+        if (!modelNames.includes(ollamaModel) && modelNames.length > 0) {
+          setOllamaModel(modelNames[0]);
+        }
+      } else {
+        setAvailableModels([]);
+        setOllamaModel(""); // Clear selection if no models
+      }
+    } catch (err) {
+      console.error("Failed to fetch models:", err);
+      setAvailableModels([]);
+      setOllamaModel(""); // Clear selection on error
+    } finally {
+      setLoadingModels(false);
+    }
+  };
+
+  const checkOllamaStatus = async () => {
+    setCheckingOllama(true);
+    try {
+      const response = await fetch("/api/ollama/status");
+      const status = await response.json();
+      setOllamaStatus(status);
+      
+      // If connected, fetch available models
+      if (status.connected) {
+        await fetchOllamaModels();
+        setSuccess(`Ollama connected successfully! Version: ${status.version}`);
+        setTimeout(() => setSuccess(null), 3000);
+      } else {
+        setError(
+          `Ollama is not connected: ${
+            status.error || "Unknown error"
+          }. Disable Ollama or start the service.`
+        );
+      }
+    } catch (err) {
+      setOllamaStatus({
+        connected: false,
+        error: err instanceof Error ? err.message : "Connection failed",
+      });
+    } finally {
+      setCheckingOllama(false);
+    }
+  };
+
+  // Fetch models when Ollama is enabled
+  useEffect(() => {
+    if (useOllama) {
+      fetchOllamaModels();
+    }
+  }, [useOllama, ollamaBaseUrl]);
 
   const handleScanAndGeneratePlan = async () => {
     setIsScanning(true);
@@ -109,6 +182,7 @@ export default function HomePage() {
           destFolder,
           useOllama,
           ollamaModel,
+          ollamaBaseUrl,
           detectDuplicates,
         }),
       });
@@ -198,9 +272,7 @@ export default function HomePage() {
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Header */}
         <div className="text-center space-y-2">
-          <h1 className="text-4xl font-bold text-gray-900">
-            AI File Management
-          </h1>
+          <h1 className="text-4xl font-bold text-gray-900">Tidy AI</h1>
           <p className="text-gray-600">
             Organize your Downloads folder with safe plan-then-apply workflow
           </p>
@@ -222,31 +294,42 @@ export default function HomePage() {
           <CardHeader>
             <CardTitle>Configuration</CardTitle>
             <CardDescription>
-              Set up your file organization preferences
+              Configure file organization settings
             </CardDescription>
           </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <CardContent className="space-y-6">
+            {/* Folder Configuration */}
+            <div className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="source">Source Folder</Label>
+                <Label htmlFor="sourceFolder">Source Folder</Label>
                 <Input
-                  id="source"
+                  id="sourceFolder"
                   value={sourceFolder}
                   onChange={(e) => setSourceFolder(e.target.value)}
                   placeholder="~/Downloads"
                 />
+                <p className="text-sm text-muted-foreground">
+                  Directory to scan for files (includes subfolders)
+                </p>
               </div>
+
               <div className="space-y-2">
-                <Label htmlFor="dest">Destination Folder</Label>
+                <Label htmlFor="destFolder">Destination Folder</Label>
                 <Input
-                  id="dest"
+                  id="destFolder"
                   value={destFolder}
                   onChange={(e) => setDestFolder(e.target.value)}
                   placeholder="~/Downloads/Organized"
                 />
+                <p className="text-sm text-muted-foreground">
+                  Where organized files will be moved
+                </p>
               </div>
             </div>
 
+            <div className="border-t pt-6" />
+
+            {/* Ollama Configuration */}
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
                 <Label htmlFor="ollama">Use Ollama for unknown files</Label>
@@ -262,15 +345,111 @@ export default function HomePage() {
             </div>
 
             {useOllama && (
-              <div className="space-y-2">
-                <Label htmlFor="model">Ollama Model</Label>
-                <Input
-                  id="model"
-                  value={ollamaModel}
-                  onChange={(e) => setOllamaModel(e.target.value)}
-                  placeholder="llama3.1"
-                />
-              </div>
+              <>
+                <div className="space-y-2">
+                  <Label htmlFor="ollamaBaseUrl">Ollama Base URL</Label>
+                  <div className="flex gap-2">
+                    <Input
+                      id="ollamaBaseUrl"
+                      value={ollamaBaseUrl}
+                      onChange={(e) => setOllamaBaseUrl(e.target.value)}
+                      placeholder="http://localhost:11434"
+                      className="flex-1"
+                    />
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={fetchOllamaModels}
+                      disabled={loadingModels}
+                      size="sm"
+                    >
+                      {loadingModels ? (
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                      ) : (
+                        "Refresh"
+                      )}
+                    </Button>
+                  </div>
+                  <p className="text-sm text-muted-foreground">
+                    URL where Ollama server is running
+                  </p>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="model">Ollama Model</Label>
+                  <div className="flex gap-2">
+                    <Select value={ollamaModel} onValueChange={setOllamaModel} disabled={availableModels.length === 0}>
+                      <SelectTrigger className="flex-1">
+                        <SelectValue placeholder={availableModels.length === 0 ? "No models available" : "Select a model"} />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {availableModels.length > 0 ? (
+                          availableModels.map((model) => (
+                            <SelectItem key={model} value={model}>
+                              {model}
+                            </SelectItem>
+                          ))
+                        ) : (
+                          <SelectItem value="no-models" disabled>
+                            No models available
+                          </SelectItem>
+                        )}
+                      </SelectContent>
+                    </Select>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => {
+                        checkOllamaStatus();
+                        fetchOllamaModels();
+                      }}
+                      disabled={checkingOllama || loadingModels}
+                    >
+                      {checkingOllama || loadingModels ? (
+                        <>
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          {loadingModels ? "Loading..." : "Checking..."}
+                        </>
+                      ) : (
+                        "Refresh Models"
+                      )}
+                    </Button>
+                  </div>
+                  <p className="text-sm text-muted-foreground">
+                    {availableModels.length > 0
+                      ? `${availableModels.length} model${availableModels.length > 1 ? 's' : ''} available`
+                      : loadingModels
+                      ? "Loading models..."
+                      : "No models found. Click 'Refresh Models' to check again."}
+                  </p>
+                </div>
+
+                {ollamaStatus && (
+                  <Alert
+                    variant={ollamaStatus.connected ? "default" : "destructive"}
+                  >
+                    {ollamaStatus.connected ? (
+                      <>
+                        <FileText className="h-4 w-4" />
+                        <AlertTitle>Ollama Connected</AlertTitle>
+                        <AlertDescription>
+                          Version: {ollamaStatus.version} • Ready to categorize
+                          files
+                        </AlertDescription>
+                      </>
+                    ) : (
+                      <>
+                        <AlertTriangle className="h-4 w-4" />
+                        <AlertTitle>Ollama Not Available</AlertTitle>
+                        <AlertDescription>
+                          {ollamaStatus.error} • Make sure Ollama is running at
+                          http://localhost:11434
+                        </AlertDescription>
+                      </>
+                    )}
+                  </Alert>
+                )}
+              </>
             )}
 
             <div className="flex items-center justify-between">
@@ -485,6 +664,9 @@ export default function HomePage() {
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialog>
+
+        {/* Settings Component */}
+        <Settings />
       </div>
     </div>
   );

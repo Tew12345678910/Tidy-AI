@@ -5,7 +5,7 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "AI File Management",
+  title: "Tidy AI",
   description: "Organize your Downloads folder with AI",
 };
 
