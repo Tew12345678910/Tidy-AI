@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -103,6 +103,8 @@ export default function HomePage() {
   const [checkingOllama, setCheckingOllama] = useState(false);
   const [availableModels, setAvailableModels] = useState<string[]>([]);
   const [loadingModels, setLoadingModels] = useState(false);
+  
+  const abortControllerRef = useRef<AbortController | null>(null);
 
   const fetchOllamaModels = async () => {
     setLoadingModels(true);
@@ -167,11 +169,23 @@ export default function HomePage() {
     }
   }, [useOllama, ollamaBaseUrl]);
 
+  const handleStopScan = () => {
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+      abortControllerRef.current = null;
+      setIsScanning(false);
+      setError("Scan cancelled by user");
+    }
+  };
+
   const handleScanAndGeneratePlan = async () => {
     setIsScanning(true);
     setError(null);
     setSuccess(null);
     setPlanResult(null);
+    
+    // Create new AbortController for this scan
+    abortControllerRef.current = new AbortController();
 
     try {
       const response = await fetch("/api/plan", {
@@ -185,6 +199,7 @@ export default function HomePage() {
           ollamaBaseUrl,
           detectDuplicates,
         }),
+        signal: abortControllerRef.current.signal,
       });
 
       if (!response.ok) {
@@ -198,9 +213,14 @@ export default function HomePage() {
         `Plan generated successfully! Found ${result.stats.totalFiles} files to organize.`
       );
     } catch (err) {
-      setError(err instanceof Error ? err.message : "An error occurred");
+      if (err instanceof Error && err.name === "AbortError") {
+        setError("Scan cancelled by user");
+      } else {
+        setError(err instanceof Error ? err.message : "Failed to generate plan");
+      }
     } finally {
       setIsScanning(false);
+      abortControllerRef.current = null;
     }
   };
 
@@ -484,6 +504,15 @@ export default function HomePage() {
                   </>
                 )}
               </Button>
+              {isScanning && (
+                <Button
+                  onClick={handleStopScan}
+                  variant="outline"
+                  className="border-red-500 text-red-500 hover:bg-red-50 hover:text-red-600"
+                >
+                  Force Stop
+                </Button>
+              )}
               <Button
                 onClick={() => setShowConfirmDialog(true)}
                 disabled={!planResult || isApplying}
