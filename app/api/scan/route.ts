@@ -9,7 +9,6 @@ import path from 'path';
 import { generateManifest, saveManifest } from '@/lib/manifest-generator';
 import { ScanRequest, ScanResponse } from '@/lib/types';
 import { getSettingsManager } from '@/lib/settings-manager';
-import { setOllamaBaseUrl } from '@/lib/ollama-client';
 
 export const runtime = 'nodejs';
 export const maxDuration = 300; // 5 minutes for large scans
@@ -38,18 +37,20 @@ export async function POST(request: NextRequest) {
       includeHidden: options.includeHidden ?? false,
       maxDepth: options.maxDepth ?? 10,
       useAI: options.useAI ?? true,
+      aiProvider: options.aiProvider || settings.aiProvider,
+      // Ollama settings
       ollamaModel: options.ollamaModel || settings.ollamaModel,
       ollamaBaseUrl: options.ollamaBaseUrl || settings.ollamaBaseUrl,
+      // OpenAI settings
+      openaiApiKey: options.openaiApiKey || settings.openaiApiKey,
+      openaiModel: options.openaiModel || settings.openaiModel,
+      openaiBaseUrl: options.openaiBaseUrl || settings.openaiBaseUrl,
+      // Extraction options
       extractPdfMetadata: options.extractPdfMetadata ?? true,
       extractFirstPage: options.extractFirstPage ?? true,
     };
     
-    // Set Ollama base URL for this request
-    if (scanOptions.ollamaBaseUrl) {
-      setOllamaBaseUrl(scanOptions.ollamaBaseUrl);
-    }
-    
-    console.log('[API /api/scan] Starting scan:', scanOptions.rootPath);
+    console.log('[API /api/scan] Starting scan with', scanOptions.aiProvider, 'provider:', scanOptions.rootPath);
     
     // Generate manifest
     const manifest = await generateManifest(scanOptions);

@@ -2,7 +2,7 @@
 
 ## 🚀 What's New
 
-Your file organizer now uses a **three-phase AI-native workflow** with local Ollama integration:
+Your file organizer now uses a **three-phase AI-native workflow** with dual AI provider support:
 
 ```
 1. SCAN → Generate Manifest (understand context)
@@ -12,17 +12,18 @@ Your file organizer now uses a **three-phase AI-native workflow** with local Oll
 
 ## 🔥 Key Features
 
+- ✅ **Dual AI Providers**: Choose between Ollama (local, free) or OpenAI (cloud, fast)
 - ✅ **Project-Aware**: Never breaks code projects (detects `.git`, `package.json`, etc.)
-- ✅ **AI Classification**: Uses Ollama to understand PDF content and file context
+- ✅ **AI Classification**: Understands PDF content and file context
 - ✅ **Safety First**: Collision detection, rollback files, dry-run mode
-- ✅ **Local-First**: All AI runs locally via Ollama, no cloud dependencies
+- ✅ **Privacy Options**: Use Ollama for complete privacy or OpenAI for better accuracy
 - ✅ **Learning System**: Remembers your preferences and improves over time
 
 ## 📦 Installation
 
 ```bash
 # Install dependencies
-npm install
+npm install  # or pnpm install
 
 # Build all components
 npm run build
@@ -31,7 +32,9 @@ npm run build
 npm run dev
 ```
 
-## 🔧 Setup Ollama
+## 🔧 AI Provider Setup
+
+### Option 1: Ollama (Local - Free & Private)
 
 ```bash
 # Install Ollama
@@ -43,7 +46,29 @@ ollama pull llama3.1
 
 # Verify it's running
 curl http://localhost:11434/api/version
+
+# Already configured as default!
 ```
+
+### Option 2: OpenAI (Cloud - Fast & Accurate)
+
+```bash
+# Get API key from https://platform.openai.com/api-keys
+
+# Configure via API
+curl -X POST http://localhost:3210/api/settings \
+  -H "Content-Type: application/json" \
+  -d '{
+    "aiProvider": "openai",
+    "openaiApiKey": "sk-...",
+    "openaiModel": "gpt-4o-mini"
+  }'
+
+# Test connection
+curl http://localhost:3210/api/ai/status
+```
+
+**📖 See `docs/OPENAI_INTEGRATION.md` for detailed comparison and setup**
 
 ## 💻 API Usage
 
@@ -96,38 +121,38 @@ curl -X POST http://localhost:3000/api/execute \
 
 ```typescript
 // 1. Scan
-const scanResponse = await fetch('/api/scan', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
+const scanResponse = await fetch("/api/scan", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
   body: JSON.stringify({
-    rootPath: '~/Downloads',
-    options: { useAI: true }
-  })
+    rootPath: "~/Downloads",
+    options: { useAI: true },
+  }),
 });
 const { manifest } = await scanResponse.json();
 
 // 2. Generate Plan
-const planResponse = await fetch('/api/plan', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
+const planResponse = await fetch("/api/plan", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
   body: JSON.stringify({
     manifestId: manifest.id,
     manifest,
-    destRoot: '~/Downloads/Organized'
-  })
+    destRoot: "~/Downloads/Organized",
+  }),
 });
 const { plan } = await planResponse.json();
 
 // 3. Review & Execute
 if (plan.safetyCheck.passed) {
-  const executeResponse = await fetch('/api/execute', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+  const executeResponse = await fetch("/api/execute", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       planId: plan.id,
       plan,
-      dryRun: false
-    })
+      dryRun: false,
+    }),
   });
   const { report } = await executeResponse.json();
   console.log(`Moved ${report.summary.completed} files!`);
@@ -157,6 +182,7 @@ Downloads/
 ```
 
 **Result:**
+
 - `MyReactApp/` → Skipped (or moved as whole unit)
 - `Chemistry_Notes.pdf` → Moved to `Chemistry Notes/`
 
@@ -201,6 +227,7 @@ Output: Inbox/document_final_v2.pdf  ← Low confidence → Review
 ## ⚙️ Configuration
 
 Settings are stored in:
+
 - **macOS**: `~/Library/Application Support/tidyai/settings.json`
 - **Linux**: `~/.local/share/tidyai/settings.json`
 - **Windows**: `%APPDATA%/tidyai/settings.json`

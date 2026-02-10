@@ -5,6 +5,23 @@
  */
 
 // ============================================================================
+// AI PROVIDER CONFIGURATION
+// ============================================================================
+
+export type AIProvider = 'ollama' | 'openai';
+
+export interface AIConfig {
+  provider: AIProvider;
+  // Ollama settings
+  ollamaBaseUrl?: string;
+  ollamaModel?: string;
+  // OpenAI settings
+  openaiApiKey?: string;
+  openaiModel?: string;
+  openaiBaseUrl?: string; // For custom endpoints
+}
+
+// ============================================================================
 // PHASE 0: PROJECT ROOT DETECTION
 // ============================================================================
 
@@ -169,8 +186,14 @@ export interface ScanOptions {
   
   // AI options
   useAI?: boolean;
+  aiProvider?: AIProvider;
+  // Ollama
   ollamaModel?: string;
   ollamaBaseUrl?: string;
+  // OpenAI
+  openaiApiKey?: string;
+  openaiModel?: string;
+  openaiBaseUrl?: string;
   
   // Extraction options
   extractPdfMetadata?: boolean;
@@ -345,9 +368,17 @@ export interface UserPreferences {
 }
 
 export interface Settings {
-  // Ollama
+  // AI Provider
+  aiProvider: AIProvider;
+  
+  // Ollama (local)
   ollamaBaseUrl: string;
   ollamaModel: string;
+  
+  // OpenAI (cloud)
+  openaiApiKey?: string;
+  openaiModel?: string;
+  openaiBaseUrl?: string; // For custom endpoints like Azure
   
   // UI
   uiPort: number;
