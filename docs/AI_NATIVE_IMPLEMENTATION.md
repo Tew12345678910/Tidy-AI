@@ -45,6 +45,7 @@ app/api/
 ### Project Integrity Protection
 
 **Automatic Detection of Project Roots:**
+
 - `.git`, `package.json`, `tsconfig.json`, `pyproject.toml`, `Cargo.toml`, `go.mod`, etc.
 - Never moves files inside project roots individually
 - Entire project roots can be moved as single units
@@ -71,6 +72,7 @@ app/api/
 ### AI Usage Points
 
 1. **Document Classification** (PHASE 1)
+
    - Extract subject/topic from PDF metadata + content
    - Classify ambiguous files using filename + folder context
    - Generate clean titles from messy filenames
@@ -229,6 +231,7 @@ app/api/
 ### Settings Location
 
 **OS-Specific Data Directory:**
+
 - macOS: `~/Library/Application Support/tidyai/`
 - Linux: `~/.local/share/tidyai/`
 - Windows: `%APPDATA%/tidyai/`
@@ -267,11 +270,7 @@ tidyai/
       "style": "original",
       "removeSpecialChars": false
     },
-    "ignorePaths": [
-      "*.tmp",
-      "node_modules/**",
-      ".git/**"
-    ],
+    "ignorePaths": ["*.tmp", "node_modules/**", ".git/**"],
     "confidenceThresholds": {
       "autoApprove": 0.8,
       "requireReview": 0.5
@@ -337,6 +336,7 @@ POST /api/execute
 ### Test Case 1: Mixed Content Directory
 
 **Setup:**
+
 ```
 Downloads/
 ├── MyReactApp/              # Project root (has package.json, .git)
@@ -350,6 +350,7 @@ Downloads/
 ```
 
 **Expected Behavior:**
+
 1. `MyReactApp/` detected as project root → SKIP (keep in place)
 2. `node_modules/` detected as generated → SKIP
 3. PDFs classified by subject → Move to `Chemistry Notes/`, `Physics Notes/`
@@ -362,11 +363,13 @@ Downloads/
 
 **Setup:**
 Multiple PDFs with mixed naming:
+
 - `chemistry_notes_chapter_1.pdf`
 - `CHM101_Final_Review.pdf`
 - `Organic_Chemistry_Textbook.pdf`
 
 **Expected Behavior:**
+
 1. Extract PDF metadata (title, subject)
 2. AI classifies all as "Chemistry Notes"
 3. Clean titles generated
@@ -377,6 +380,7 @@ Multiple PDFs with mixed naming:
 **Setup:** Ollama service is not running
 
 **Expected Behavior:**
+
 1. Scan succeeds with warnings
 2. Falls back to extension-based classification
 3. Low-confidence items sent to `Inbox/Review`
@@ -389,7 +393,7 @@ Multiple PDFs with mixed naming:
 
 ```typescript
 // lib/project-detector.ts
-const detection = await detectProjectRoot('/path/to/folder');
+const detection = await detectProjectRoot("/path/to/folder");
 // Returns: { isProjectRoot, signals, projectType, confidence }
 
 // Safety check
@@ -401,7 +405,7 @@ const validation = validateNoProjectRootViolations(from, to, projectRoots);
 
 ```typescript
 // lib/pdf-extractor.ts
-const metadata = await extractPdfMetadata('/path/to/file.pdf');
+const metadata = await extractPdfMetadata("/path/to/file.pdf");
 // Returns: { title, author, subject, keywords, firstPageSnippet }
 
 const cleanTitle = generateCleanTitle(metadata, filename);
@@ -412,11 +416,11 @@ const cleanTitle = generateCleanTitle(metadata, filename);
 
 ```typescript
 // lib/ollama-client.ts
-const client = getOllamaClient({ baseUrl: 'http://localhost:11434' });
+const client = getOllamaClient({ baseUrl: "http://localhost:11434" });
 
-const classification = await client.classifyDocument('llama3.1', {
-  filename: 'chem_notes.pdf',
-  metadata: { title: '...', subject: '...' }
+const classification = await client.classifyDocument("llama3.1", {
+  filename: "chem_notes.pdf",
+  metadata: { title: "...", subject: "..." },
 });
 // Returns: { category, subject, title, confidence, reasoning }
 ```
@@ -428,18 +432,21 @@ const classification = await client.classifyDocument('llama3.1', {
 The current UI still uses the old workflow. A new UI needs to be built that:
 
 1. **Scan Page**
+
    - Select folder
    - Configure AI options
    - Show real-time scan progress
    - Display manifest summary
 
 2. **Manifest View**
+
    - Table of all detected items
    - Confidence indicators
    - Filter by type/confidence
    - Review low-confidence items
 
 3. **Plan View**
+
    - Proposed moves with reasons
    - Approve/reject individual actions
    - Override categories
@@ -455,15 +462,18 @@ The current UI still uses the old workflow. A new UI needs to be built that:
 ### Future Enhancements
 
 1. **Learning System**
+
    - Track user overrides
    - Auto-generate taxonomy rules
    - Improve classification over time
 
 2. **Vector Search** (Optional)
+
    - Semantic similarity for document grouping
    - Better duplicate detection
 
 3. **Batch Processing**
+
    - Process large directories in chunks
    - Resume interrupted scans
 
@@ -490,13 +500,15 @@ ollama pull llama3.1
 ### Permission Errors
 
 Ensure the app has file system access to:
+
 - Source directories
-- Destination directories  
+- Destination directories
 - Settings directory (`~/Library/Application Support/tidyai/`)
 
 ### Large Directory Scans
 
 For directories with 1000+ files:
+
 - Increase API timeouts
 - Consider chunked processing
 - Use CLI mode for background processing
@@ -506,6 +518,7 @@ For directories with 1000+ files:
 ### POST /api/scan
 
 **Request:**
+
 ```typescript
 {
   rootPath: string;
@@ -522,6 +535,7 @@ For directories with 1000+ files:
 ```
 
 **Response:**
+
 ```typescript
 {
   manifest: Manifest;
@@ -532,6 +546,7 @@ For directories with 1000+ files:
 ### POST /api/plan
 
 **Request:**
+
 ```typescript
 {
   manifestId: string;
@@ -542,6 +557,7 @@ For directories with 1000+ files:
 ```
 
 **Response:**
+
 ```typescript
 {
   plan: Plan;
@@ -553,6 +569,7 @@ For directories with 1000+ files:
 ### POST /api/execute
 
 **Request:**
+
 ```typescript
 {
   planId: string;
@@ -563,6 +580,7 @@ For directories with 1000+ files:
 ```
 
 **Response:**
+
 ```typescript
 {
   report: ExecutionReport;
@@ -573,6 +591,7 @@ For directories with 1000+ files:
 ### GET /api/settings
 
 **Response:**
+
 ```typescript
 {
   ollamaBaseUrl: string;
@@ -586,13 +605,15 @@ For directories with 1000+ files:
 ### POST /api/settings
 
 **Request:**
+
 ```typescript
-Partial<Settings>
+Partial<Settings>;
 ```
 
 **Response:**
+
 ```typescript
-Settings
+Settings;
 ```
 
 ---
@@ -610,6 +631,7 @@ Settings
 ## 🎓 Summary
 
 Your file organizer is now **AI-native** with:
+
 - ✅ Three-phase safety workflow
 - ✅ Project root protection
 - ✅ Ollama integration (local-first)

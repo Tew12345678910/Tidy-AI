@@ -1,6 +1,6 @@
 /**
  * Type definitions for AI-native file organizer
- * 
+ *
  * Three-phase workflow: MANIFEST → PLAN → EXECUTE
  */
 
@@ -8,7 +8,7 @@
 // AI PROVIDER CONFIGURATION
 // ============================================================================
 
-export type AIProvider = 'ollama' | 'openai';
+export type AIProvider = "ollama" | "openai";
 
 export interface AIConfig {
   provider: AIProvider;
@@ -27,72 +27,81 @@ export interface AIConfig {
 
 export const PROJECT_ROOT_SIGNALS = [
   // Version control
-  '.git',
-  '.svn',
-  '.hg',
-  
+  ".git",
+  ".svn",
+  ".hg",
+
   // Node.js / JavaScript
-  'package.json',
-  'pnpm-lock.yaml',
-  'yarn.lock',
-  'package-lock.json',
-  'tsconfig.json',
-  'next.config.js',
-  'next.config.mjs',
-  'vite.config.js',
-  'webpack.config.js',
-  
+  "package.json",
+  "pnpm-lock.yaml",
+  "yarn.lock",
+  "package-lock.json",
+  "tsconfig.json",
+  "next.config.js",
+  "next.config.mjs",
+  "vite.config.js",
+  "webpack.config.js",
+
   // Python
-  'pyproject.toml',
-  'requirements.txt',
-  'Pipfile',
-  'setup.py',
-  'poetry.lock',
-  
+  "pyproject.toml",
+  "requirements.txt",
+  "Pipfile",
+  "setup.py",
+  "poetry.lock",
+
   // Rust
-  'Cargo.toml',
-  'Cargo.lock',
-  
+  "Cargo.toml",
+  "Cargo.lock",
+
   // Go
-  'go.mod',
-  'go.sum',
-  
+  "go.mod",
+  "go.sum",
+
   // Java
-  'pom.xml',
-  'build.gradle',
-  'build.gradle.kts',
-  
+  "pom.xml",
+  "build.gradle",
+  "build.gradle.kts",
+
   // .NET
-  '.sln',
-  '.csproj',
-  
+  ".sln",
+  ".csproj",
+
   // Ruby
-  'Gemfile',
-  'Gemfile.lock',
-  
+  "Gemfile",
+  "Gemfile.lock",
+
   // PHP
-  'composer.json',
-  'composer.lock',
+  "composer.json",
+  "composer.lock",
 ] as const;
 
 export const GENERATED_FOLDERS = [
-  'node_modules',
-  '.next',
-  'dist',
-  'build',
-  'target',
-  '__pycache__',
-  '.venv',
-  'venv',
-  '.pytest_cache',
-  '.gradle',
-  'out',
+  "node_modules",
+  ".next",
+  "dist",
+  "build",
+  "target",
+  "__pycache__",
+  ".venv",
+  "venv",
+  ".pytest_cache",
+  ".gradle",
+  "out",
 ] as const;
 
 export interface ProjectRootDetection {
   isProjectRoot: boolean;
   signals: string[];
-  projectType?: 'node' | 'python' | 'rust' | 'go' | 'java' | 'dotnet' | 'ruby' | 'php' | 'mixed';
+  projectType?:
+    | "node"
+    | "python"
+    | "rust"
+    | "go"
+    | "java"
+    | "dotnet"
+    | "ruby"
+    | "php"
+    | "mixed";
   confidence: number;
 }
 
@@ -100,20 +109,20 @@ export interface ProjectRootDetection {
 // PHASE 1: MANIFEST
 // ============================================================================
 
-export type ItemType = 
-  | 'ProjectRoot'
-  | 'Document'
-  | 'Media'
-  | 'Archive'
-  | 'Code'
-  | 'Mixed'
-  | 'Generated'
-  | 'Unknown';
+export type ItemType =
+  | "ProjectRoot"
+  | "Document"
+  | "Media"
+  | "Archive"
+  | "Code"
+  | "Mixed"
+  | "Generated"
+  | "Unknown";
 
-export type RecommendedHandling = 
-  | 'keep'        // Keep in place (project roots, generated folders)
-  | 'group'       // Group with similar items
-  | 'review';     // Send to review/inbox (low confidence)
+export type RecommendedHandling =
+  | "keep" // Keep in place (project roots, generated folders)
+  | "group" // Group with similar items
+  | "review"; // Send to review/inbox (low confidence)
 
 export interface DocumentMetadata {
   title?: string;
@@ -123,46 +132,46 @@ export interface DocumentMetadata {
   creationDate?: string;
   modificationDate?: string;
   pageCount?: number;
-  firstPageSnippet?: string;  // First 500 chars of text
-  extractionMethod?: 'pdf-parse' | 'filename' | 'none';
+  firstPageSnippet?: string; // First 500 chars of text
+  extractionMethod?: "pdf-parse" | "filename" | "none";
 }
 
 export interface ManifestEntry {
   // Identity
   path: string;
-  relativePath: string;  // Relative to scan root
+  relativePath: string; // Relative to scan root
   name: string;
   extension: string;
   size: number;
   modifiedDate: string;
-  
+
   // Classification
   type: ItemType;
-  confidence: number;  // 0.0 to 1.0
-  signals: string[];   // Human-readable reasons
-  
+  confidence: number; // 0.0 to 1.0
+  signals: string[]; // Human-readable reasons
+
   // Document-specific
   metadata?: DocumentMetadata;
-  
+
   // Project-specific
   projectRoot?: ProjectRootDetection;
   isInsideProjectRoot?: boolean;
   parentProjectRoot?: string;
-  
+
   // Recommendations
   recommendedHandling: RecommendedHandling;
-  suggestedCategory?: string;  // e.g., "ChemistryNotes", "PersonalPhotos"
+  suggestedCategory?: string; // e.g., "ChemistryNotes", "PersonalPhotos"
   suggestedTags?: string[];
 }
 
 export interface Manifest {
-  id: string;  // UUID
+  id: string; // UUID
   scanRoot: string;
   createdAt: string;
   scanOptions: ScanOptions;
-  
+
   entries: ManifestEntry[];
-  
+
   summary: {
     totalItems: number;
     projectRoots: number;
@@ -171,19 +180,19 @@ export interface Manifest {
     archives: number;
     code: number;
     unknown: number;
-    
-    highConfidence: number;  // >= 0.8
+
+    highConfidence: number; // >= 0.8
     mediumConfidence: number; // 0.5 - 0.8
-    lowConfidence: number;   // < 0.5
+    lowConfidence: number; // < 0.5
   };
 }
 
 export interface ScanOptions {
   rootPath: string;
-  ignorePaths?: string[];  // Glob patterns
+  ignorePaths?: string[]; // Glob patterns
   includeHidden?: boolean;
   maxDepth?: number;
-  
+
   // AI options
   useAI?: boolean;
   aiProvider?: AIProvider;
@@ -194,7 +203,7 @@ export interface ScanOptions {
   openaiApiKey?: string;
   openaiModel?: string;
   openaiBaseUrl?: string;
-  
+
   // Extraction options
   extractPdfMetadata?: boolean;
   extractFirstPage?: boolean;
@@ -204,38 +213,34 @@ export interface ScanOptions {
 // PHASE 2: PLAN
 // ============================================================================
 
-export type ActionType = 
-  | 'move'
-  | 'rename'
-  | 'move-rename'
-  | 'skip';
+export type ActionType = "move" | "rename" | "move-rename" | "skip";
 
 export interface PlanAction {
-  id: string;  // UUID
-  
+  id: string; // UUID
+
   // Source
   from: string;
   fromRelative: string;
-  
+
   // Destination
   to: string;
   toRelative: string;
-  
+
   // Action details
   actionType: ActionType;
   reason: string;
   confidence: number;
-  
+
   // Classification
   category?: string;
   tags?: string[];
-  
+
   // Safety
   isProjectRoot?: boolean;
   movesInsideProjectRoot?: boolean;
   hasCollision?: boolean;
-  collisionResolution?: 'suffix' | 'skip' | 'manual';
-  
+  collisionResolution?: "suffix" | "skip" | "manual";
+
   // User control
   approved?: boolean;
   userOverride?: boolean;
@@ -246,7 +251,7 @@ export interface SafetyCheck {
   passed: boolean;
   errors: string[];
   warnings: string[];
-  
+
   checks: {
     movedInsideProjectRoot: boolean;
     overwrites: string[];
@@ -257,35 +262,35 @@ export interface SafetyCheck {
 }
 
 export interface Plan {
-  id: string;  // UUID
+  id: string; // UUID
   manifestId: string;
   createdAt: string;
-  
+
   destRoot: string;
-  
+
   actions: PlanAction[];
-  
+
   safetyCheck: SafetyCheck;
-  
+
   summary: {
     totalActions: number;
     moves: number;
     renames: number;
     skips: number;
-    
+
     categoryCounts: Record<string, number>;
-    
+
     highConfidence: number;
     mediumConfidence: number;
     lowConfidence: number;
   };
-  
+
   userPreferences?: UserPreferences;
 }
 
 export interface RollbackEntry {
-  from: string;  // New location
-  to: string;    // Original location
+  from: string; // New location
+  to: string; // Original location
   actionId: string;
   timestamp: string;
 }
@@ -300,34 +305,34 @@ export interface Rollback {
 // PHASE 3: EXECUTE
 // ============================================================================
 
-export type ExecutionStatus = 
-  | 'pending'
-  | 'in-progress'
-  | 'completed'
-  | 'failed'
-  | 'skipped';
+export type ExecutionStatus =
+  | "pending"
+  | "in-progress"
+  | "completed"
+  | "failed"
+  | "skipped";
 
 export interface ExecutionResult {
   actionId: string;
   status: ExecutionStatus;
   error?: string;
-  actualDestination?: string;  // If collision resolved
+  actualDestination?: string; // If collision resolved
   timestamp: string;
 }
 
 export interface ExecutionReport {
   planId: string;
   executedAt: string;
-  
+
   results: ExecutionResult[];
-  
+
   summary: {
     total: number;
     completed: number;
     failed: number;
     skipped: number;
   };
-  
+
   rollback: Rollback;
   rollbackFilePath?: string;
 }
@@ -337,55 +342,55 @@ export interface ExecutionReport {
 // ============================================================================
 
 export interface TaxonomyRule {
-  pattern: string;  // Regex or keyword
+  pattern: string; // Regex or keyword
   category: string;
   confidence: number;
-  source: 'user' | 'learned' | 'default';
+  source: "user" | "learned" | "default";
 }
 
 export interface NamingPreference {
-  style: 'original' | 'titlecase' | 'lowercase' | 'camelcase';
+  style: "original" | "titlecase" | "lowercase" | "camelcase";
   removeSpecialChars: boolean;
-  dateFormat?: 'YYYY-MM-DD' | 'YYYYMMDD' | 'none';
+  dateFormat?: "YYYY-MM-DD" | "YYYYMMDD" | "none";
 }
 
 export interface UserPreferences {
   // Taxonomy
   taxonomy: TaxonomyRule[];
-  defaultFolders: Record<string, string>;  // category -> folder
-  
+  defaultFolders: Record<string, string>; // category -> folder
+
   // Naming
   naming: NamingPreference;
-  
+
   // Ignore patterns
   ignorePaths: string[];
-  
+
   // Thresholds
   confidenceThresholds: {
-    autoApprove: number;  // >= this, auto-approve
-    requireReview: number;  // < this, send to review
+    autoApprove: number; // >= this, auto-approve
+    requireReview: number; // < this, send to review
   };
 }
 
 export interface Settings {
   // AI Provider
   aiProvider: AIProvider;
-  
+
   // Ollama (local)
   ollamaBaseUrl: string;
   ollamaModel: string;
-  
+
   // OpenAI (cloud)
   openaiApiKey?: string;
   openaiModel?: string;
   openaiBaseUrl?: string; // For custom endpoints like Azure
-  
+
   // UI
   uiPort: number;
-  
+
   // Preferences
   preferences: UserPreferences;
-  
+
   // Last updated
   updatedAt: string;
 }
@@ -393,12 +398,12 @@ export interface Settings {
 export interface UserOverride {
   id: string;
   timestamp: string;
-  
+
   originalAction: PlanAction;
-  userDecision: 'approve' | 'reject' | 'modify';
+  userDecision: "approve" | "reject" | "modify";
   userCategory?: string;
   userNote?: string;
-  
+
   // For learning
   learningSignal?: {
     pattern: string;
@@ -433,7 +438,7 @@ export interface PlanGenerationRequest {
 }
 
 export interface PlanGenerationResponse {
-  actions: Omit<PlanAction, 'id'>[];
+  actions: Omit<PlanAction, "id">[];
   reasoning: string;
 }
 
@@ -465,7 +470,7 @@ export interface PlanResponse {
 
 export interface ExecuteRequest {
   planId: string;
-  selectedActionIds?: string[];  // If not provided, execute all approved
+  selectedActionIds?: string[]; // If not provided, execute all approved
   dryRun?: boolean;
 }
 

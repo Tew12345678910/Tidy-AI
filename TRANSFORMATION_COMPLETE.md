@@ -88,11 +88,13 @@ AI_NATIVE_README.md           ✨ NEW - Quick start guide
 ### 1. Project Root Protection
 
 ✅ **Automatic Detection:**
+
 - Detects 30+ project signals (`.git`, `package.json`, `Cargo.toml`, etc.)
 - Identifies project type (Node, Python, Rust, Go, Java, etc.)
 - Confidence scoring for detection accuracy
 
 ✅ **Safety Rules:**
+
 - Files inside project roots are NEVER moved individually
 - Entire project roots can be moved as single units
 - Generated folders (`node_modules`, `.next`, `dist`) protected
@@ -120,21 +122,24 @@ AI_NATIVE_README.md           ✨ NEW - Quick start guide
 ### Ollama Client Features
 
 ✅ **Structured JSON Output:**
+
 ```typescript
-const classification = await client.classifyDocument('llama3.1', {
-  filename: 'chem_notes.pdf',
-  metadata: { title: '...', subject: '...' }
+const classification = await client.classifyDocument("llama3.1", {
+  filename: "chem_notes.pdf",
+  metadata: { title: "...", subject: "..." },
 });
 // Returns: { category, subject, title, confidence, reasoning }
 ```
 
 ✅ **Connection Management:**
+
 - Health checks
 - Model discovery
 - Timeout handling
 - Retry logic with exponential backoff
 
 ✅ **Configurable:**
+
 - Base URL persistence
 - Model selection
 - Temperature control
@@ -142,11 +147,13 @@ const classification = await client.classifyDocument('llama3.1', {
 ### AI Usage Points
 
 **1. Document Classification (PHASE 1)**
+
 - Extract subject/topic from PDF metadata + first page
 - Classify ambiguous files using context
 - Generate clean titles
 
 **2. Plan Enhancement (PHASE 2)**
+
 - Group similar documents by subject
 - Suggest folder structures
 - Learn from user overrides
@@ -194,6 +201,7 @@ const classification = await client.classifyDocument('llama3.1', {
 ### Storage Location
 
 **OS-Specific Directories:**
+
 - macOS: `~/Library/Application Support/tidyai/`
 - Linux: `~/.local/share/tidyai/`
 - Windows: `%APPDATA%/tidyai/`
@@ -214,7 +222,9 @@ tidyai/
   "ollamaBaseUrl": "http://127.0.0.1:11434",
   "ollamaModel": "llama3.1",
   "preferences": {
-    "taxonomy": [/* learned rules */],
+    "taxonomy": [
+      /* learned rules */
+    ],
     "confidenceThresholds": {
       "autoApprove": 0.8,
       "requireReview": 0.5
@@ -228,27 +238,28 @@ tidyai/
 
 ### New Endpoints
 
-| Endpoint | Method | Purpose |
-|----------|--------|---------|
-| `/api/scan` | POST | Generate manifest from directory |
-| `/api/plan` | POST | Generate organization plan |
-| `/api/execute` | POST | Execute approved plan |
-| `/api/settings` | GET/POST | Manage settings |
-| `/api/settings` | DELETE | Reset to defaults |
+| Endpoint        | Method   | Purpose                          |
+| --------------- | -------- | -------------------------------- |
+| `/api/scan`     | POST     | Generate manifest from directory |
+| `/api/plan`     | POST     | Generate organization plan       |
+| `/api/execute`  | POST     | Execute approved plan            |
+| `/api/settings` | GET/POST | Manage settings                  |
+| `/api/settings` | DELETE   | Reset to defaults                |
 
 ### Updated Endpoints
 
-| Endpoint | Status | Notes |
-|----------|--------|-------|
-| `/api/apply` | ⚠️  Deprecated | Returns 410, use `/api/execute` |
-| `/api/ollama/models` | ✅ Active | List available models |
-| `/api/ollama/status` | ✅ Active | Check connection |
+| Endpoint             | Status        | Notes                           |
+| -------------------- | ------------- | ------------------------------- |
+| `/api/apply`         | ⚠️ Deprecated | Returns 410, use `/api/execute` |
+| `/api/ollama/models` | ✅ Active     | List available models           |
+| `/api/ollama/status` | ✅ Active     | Check connection                |
 
 ## 🧪 Testing Results
 
 ### Test 1: Mixed Content Directory ✅
 
 **Input:**
+
 ```
 Downloads/
 ├── MyReactApp/              # Project with package.json + .git
@@ -258,6 +269,7 @@ Downloads/
 ```
 
 **Result:**
+
 - ✅ `MyReactApp/` detected as project → Skipped
 - ✅ PDF classified as "Chemistry Notes" → Moved correctly
 - ✅ Image → Moved to Images/
@@ -269,6 +281,7 @@ Downloads/
 **Input:** Multiple PDFs with chemistry content
 
 **Result:**
+
 - ✅ Metadata extracted from all PDFs
 - ✅ AI classified all as "Chemistry Notes"
 - ✅ Clean titles generated
@@ -279,6 +292,7 @@ Downloads/
 **Input:** Ollama service not running
 
 **Result:**
+
 - ✅ Scan succeeded with warnings
 - ✅ Fell back to extension-based classification
 - ✅ Low-confidence items → Inbox/Review
@@ -290,21 +304,21 @@ Downloads/
 ### Project Detection
 
 ```typescript
-import { detectProjectRoot, findProjectRoots } from '@/lib/project-detector';
+import { detectProjectRoot, findProjectRoots } from "@/lib/project-detector";
 
-const detection = await detectProjectRoot('/path/to/folder');
+const detection = await detectProjectRoot("/path/to/folder");
 // { isProjectRoot, signals, projectType, confidence }
 
-const roots = await findProjectRoots('/path/to/scan');
+const roots = await findProjectRoots("/path/to/scan");
 // Map<string, ProjectRootDetection>
 ```
 
 ### PDF Extraction
 
 ```typescript
-import { extractPdfMetadata, generateCleanTitle } from '@/lib/pdf-extractor';
+import { extractPdfMetadata, generateCleanTitle } from "@/lib/pdf-extractor";
 
-const metadata = await extractPdfMetadata('/path/to/file.pdf');
+const metadata = await extractPdfMetadata("/path/to/file.pdf");
 // { title, author, subject, keywords, firstPageSnippet }
 
 const title = generateCleanTitle(metadata, filename);
@@ -314,23 +328,23 @@ const title = generateCleanTitle(metadata, filename);
 ### Ollama Client
 
 ```typescript
-import { getOllamaClient } from '@/lib/ollama-client';
+import { getOllamaClient } from "@/lib/ollama-client";
 
 const client = getOllamaClient();
 await client.checkConnection();
 const models = await client.listModels();
-const result = await client.classifyDocument('llama3.1', request);
+const result = await client.classifyDocument("llama3.1", request);
 ```
 
 ### Manifest Generation
 
 ```typescript
-import { generateManifest, saveManifest } from '@/lib/manifest-generator';
+import { generateManifest, saveManifest } from "@/lib/manifest-generator";
 
 const manifest = await generateManifest({
-  rootPath: '/Users/you/Downloads',
+  rootPath: "/Users/you/Downloads",
   useAI: true,
-  ollamaModel: 'llama3.1'
+  ollamaModel: "llama3.1",
 });
 
 const filepath = await saveManifest(manifest, outputDir);
@@ -339,7 +353,7 @@ const filepath = await saveManifest(manifest, outputDir);
 ### Plan Generation
 
 ```typescript
-import { generatePlan, savePlan } from '@/lib/plan-generator';
+import { generatePlan, savePlan } from "@/lib/plan-generator";
 
 const { plan, rollback } = await generatePlan(
   manifest,
@@ -354,11 +368,11 @@ await saveRollback(rollback, outputDir);
 ### Execution
 
 ```typescript
-import { executePlan, saveExecutionReport } from '@/lib/executor';
+import { executePlan, saveExecutionReport } from "@/lib/executor";
 
 const report = await executePlan(plan, {
   dryRun: false,
-  selectedActionIds: ['action1', 'action2']
+  selectedActionIds: ["action1", "action2"],
 });
 
 await saveExecutionReport(report, outputDir);
@@ -371,18 +385,21 @@ await saveExecutionReport(report, outputDir);
 The current UI uses the legacy workflow. Build a new UI that exposes:
 
 ✅ **Scan Page**
+
 - Folder selector with validation
 - AI configuration (model, base URL)
 - Real-time scan progress
 - Manifest summary view
 
 ✅ **Manifest View**
+
 - Sortable/filterable table
 - Confidence indicators (color-coded)
 - Type badges (Document, ProjectRoot, etc.)
 - Quick actions (review, skip)
 
 ✅ **Plan View**
+
 - Action list with approve/reject
 - Safety warnings display
 - Collision previews
@@ -390,6 +407,7 @@ The current UI uses the legacy workflow. Build a new UI that exposes:
 - Before/after comparison
 
 ✅ **Execute Page**
+
 - Progress bar
 - Real-time execution log
 - Success/failure stats
@@ -442,18 +460,18 @@ tidyai rollback --file rollback.json
 
 ## 🎓 Acceptance Criteria Status
 
-| Criterion | Status | Notes |
-|-----------|--------|-------|
-| Project roots detected | ✅ PASS | 30+ signals, type detection |
-| Safety checks enforced | ✅ PASS | No moving inside projects |
-| PDF classification | ✅ PASS | Metadata + AI classification |
-| Collision handling | ✅ PASS | Automatic suffix resolution |
-| Rollback mapping | ✅ PASS | Complete reverse mapping |
-| Ollama integration | ✅ PASS | Structured JSON, retries |
-| Settings persistence | ✅ PASS | OS-appropriate directories |
-| Three-phase workflow | ✅ PASS | MANIFEST → PLAN → EXECUTE |
-| TypeScript build | ✅ PASS | No errors, all types valid |
-| UI implementation | ⏳ PENDING | Legacy UI works, needs update |
+| Criterion              | Status     | Notes                         |
+| ---------------------- | ---------- | ----------------------------- |
+| Project roots detected | ✅ PASS    | 30+ signals, type detection   |
+| Safety checks enforced | ✅ PASS    | No moving inside projects     |
+| PDF classification     | ✅ PASS    | Metadata + AI classification  |
+| Collision handling     | ✅ PASS    | Automatic suffix resolution   |
+| Rollback mapping       | ✅ PASS    | Complete reverse mapping      |
+| Ollama integration     | ✅ PASS    | Structured JSON, retries      |
+| Settings persistence   | ✅ PASS    | OS-appropriate directories    |
+| Three-phase workflow   | ✅ PASS    | MANIFEST → PLAN → EXECUTE     |
+| TypeScript build       | ✅ PASS    | No errors, all types valid    |
+| UI implementation      | ⏳ PENDING | Legacy UI works, needs update |
 
 ## 🏆 Summary
 
