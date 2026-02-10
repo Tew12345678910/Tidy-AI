@@ -14,7 +14,7 @@ console.log(`
 ║                                                            ║
 ║   Open http://localhost:3210 in your browser              ║
 ║                                                            ║
-║   📖  Full docs: https://github.com/yourusername/tidy-ai  ║
+║   📖  Full docs: https://github.com/Tew12345678910/Tidy-AI  ║
 ║                                                            ║
 ╚════════════════════════════════════════════════════════════╝
 `);

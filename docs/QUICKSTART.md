@@ -12,8 +12,8 @@ npm install -g tidyai
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/tidy-ai.git
-cd tidy-ai
+git clone https://github.com/Tew12345678910/Tidy-AI.git
+cd Tidy-AI
 
 # Install dependencies
 npm install

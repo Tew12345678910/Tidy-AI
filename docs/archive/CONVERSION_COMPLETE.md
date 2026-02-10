@@ -223,7 +223,7 @@ See `TESTING.md` for detailed test procedures.
 ### 1. Local Testing
 
 ```bash
-cd /Users/tew/Documents/Project/GitHub/Ai-file-management
+cd /Users/tew/Documents/Project/GitHub/Tidy-AI
 npm install
 npm run build
 npm link

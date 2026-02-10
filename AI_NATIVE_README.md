@@ -389,7 +389,7 @@ When viewing plans:
 
 ## 📞 Support
 
-- **Issues**: [GitHub Issues](https://github.com/Tew12345678910/Ai-file-management/issues)
+- **Issues**: [GitHub Issues](https://github.com/Tew12345678910/Tidy-AI/issues)
 - **Documentation**: [docs/](./docs/)
 - **Examples**: See `docs/AI_NATIVE_IMPLEMENTATION.md`
 

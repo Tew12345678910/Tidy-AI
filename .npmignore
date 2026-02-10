@@ -1,23 +1,5 @@
-# Source files (only publish compiled dist/)
-cli/
-server/
-app/
-components/
-lib/
-*.ts
-*.tsx
-!*.d.ts
-
-# Config files
-tsconfig*.json
-next.config.js
-tailwind.config.ts
-postcss.config.js
-.eslintrc.json
-
-# Development
-.next/
-node_modules/
+## Intentionally empty: packaging is controlled by
+## the "files" allowlist in package.json.
 .env*
 !.env.example
 

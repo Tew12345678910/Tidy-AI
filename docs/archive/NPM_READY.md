@@ -236,7 +236,7 @@ git push origin main --tags
 - **Install**: `npm install -g tidy-ai`
 - **Binary**: `tidyai`
 - **License**: MIT
-- **Repository**: https://github.com/Tew12345678910/Ai-file-management
+- **Repository**: https://github.com/Tew12345678910/Tidy-AI
 
 ---
 

@@ -40,9 +40,7 @@ Replace placeholder URLs in README.md:
 
 ```bash
 # Find and replace
-# https://github.com/yourusername/tidy-ai
-# with
-# https://github.com/Tew12345678910/Ai-file-management
+# https://github.com/Tew12345678910/Tidy-AI
 ```
 
 ## Step 2: Build the Package
@@ -185,7 +183,7 @@ git tag v1.0.0
 git push origin v1.0.0
 
 # Create release on GitHub
-# Go to: https://github.com/Tew12345678910/Ai-file-management/releases/new
+# Go to: https://github.com/Tew12345678910/Tidy-AI/releases/new
 # - Tag: v1.0.0
 # - Title: Tidy AI v1.0.0
 # - Description: Initial release

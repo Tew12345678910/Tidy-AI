@@ -126,8 +126,8 @@ export PATH="$PATH:$(npm config get prefix)/bin"
 
 ## Get Help
 
-- Documentation: [GitHub README](https://github.com/Tew12345678910/Ai-file-management)
-- Issues: [GitHub Issues](https://github.com/Tew12345678910/Ai-file-management/issues)
-- Quick Start: [QUICKSTART.md](https://github.com/Tew12345678910/Ai-file-management/blob/main/QUICKSTART.md)
+- Documentation: [GitHub README](https://github.com/Tew12345678910/Tidy-AI)
+- Issues: [GitHub Issues](https://github.com/Tew12345678910/Tidy-AI/issues)
+- Quick Start: [QUICKSTART.md](https://github.com/Tew12345678910/Tidy-AI/blob/main/docs/QUICKSTART.md)
 
 Enjoy organizing your files! 🎉

@@ -12,7 +12,6 @@
     "public/",
     "scripts/postinstall.js",
     "README.md",
-    "QUICKSTART.md",
     "LICENSE"
   ],
   "scripts": {
@@ -23,7 +22,7 @@
     "build:server": "tsc --project tsconfig.server.json",
     "start": "next start",
     "lint": "next lint",
-    "cli": "node dist/cli/index.js",
+    "cli": "node dist/cli/cli/index.js",
     "prepublishOnly": "npm run build",
     "postinstall": "node scripts/postinstall.js || true",
     "prepack": "npm run build",
@@ -48,12 +47,12 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Tew12345678910/Ai-file-management.git"
+    "url": "git+https://github.com/Tew12345678910/Tidy-AI.git"
   },
   "bugs": {
-    "url": "https://github.com/Tew12345678910/Ai-file-management/issues"
+    "url": "https://github.com/Tew12345678910/Tidy-AI/issues"
   },
-  "homepage": "https://github.com/Tew12345678910/Ai-file-management#readme",
+  "homepage": "https://github.com/Tew12345678910/Tidy-AI#readme",
   "dependencies": {
     "@radix-ui/react-alert-dialog": "^1.0.5",
     "@radix-ui/react-dialog": "^1.0.5",

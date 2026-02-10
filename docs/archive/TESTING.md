@@ -14,7 +14,7 @@ Before testing, ensure you have:
 
 ```bash
 # Clone the repository
-cd /Users/tew/Documents/Project/GitHub/Ai-file-management
+cd /Users/tew/Documents/Project/GitHub/Tidy-AI
 
 # Install dependencies
 npm install

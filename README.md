@@ -9,9 +9,9 @@
 
 **A smart, safe, and beautiful CLI application for organizing your Downloads folder using AI-powered categorization and a "plan-then-apply" workflow.**
 
-[Features](#features) • [Installation](#installation) • [Quick Start](#quick-start) • [Documentation](docs/)
+[Features](#features) • [Installation](#installation) • [Quick Start](#quick-start) • [Documentation](https://github.com/Tew12345678910/Tidy-AI/tree/main/docs)
 
-> 📚 **Full Documentation**: See [docs/](docs/) for detailed guides, architecture, and API reference
+> 📚 **Full Documentation**: See [docs/](https://github.com/Tew12345678910/Tidy-AI/tree/main/docs) for detailed guides, architecture, and API reference
 
 </div>
 
@@ -105,8 +105,8 @@ That's it! Tidy AI is now installed globally on your system.
 
 ```bash
 # Clone the repository
-git clone https://github.com/Tew12345678910/Ai-file-management.git
-cd Ai-file-management
+git clone https://github.com/Tew12345678910/Tidy-AI.git
+cd Tidy-AI
 
 # Install dependencies
 pnpm install
@@ -1104,6 +1104,6 @@ SOFTWARE.
 
 ⭐ Star this repo if you find it helpful!
 
-[Report Bug](https://github.com/yourusername/tidy-ai/issues) • [Request Feature](https://github.com/yourusername/tidy-ai/issues)
+[Report Bug](https://github.com/Tew12345678910/Tidy-AI/issues) • [Request Feature](https://github.com/Tew12345678910/Tidy-AI/issues)
 
 </div>

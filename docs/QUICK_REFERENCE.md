@@ -383,9 +383,9 @@ pnpm run build
 
 ## 🔗 Links
 
-- **Repository**: https://github.com/Tew12345678910/Ai-file-management
+- **Repository**: https://github.com/Tew12345678910/Tidy-AI
 - **npm Package**: https://www.npmjs.com/package/tidy-ai
-- **Issues**: https://github.com/Tew12345678910/Ai-file-management/issues
+- **Issues**: https://github.com/Tew12345678910/Tidy-AI/issues
 - **Ollama**: https://ollama.ai
 
 ---
